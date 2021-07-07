@@ -1,4 +1,4 @@
-// Author:
+// Author: Jordan Muturi
 
 // Global UI Variables
 let canvasDiv;
@@ -26,6 +26,9 @@ let downs;
 let lefts;
 let rights;
 let centers;
+let ballX;
+let ballY;
+let ballSpeed;
 
 function setup() {
   canvasDiv = createDiv();
@@ -43,7 +46,11 @@ function setup() {
   rights = 0;
   centers = 0;
   // new code below
-
+  ballX = width / 2;
+  ballY = height / 2;
+  ballSpeed = 10;
+  video = createCapture(VIDEO, videoReady);
+  video.parent(canvasDiv);
 }
 
 function draw() {
@@ -52,26 +59,28 @@ function draw() {
     if(knnClassifier.getNumLabels() > 0) {
       knnClassifier.classify(imgFeatures, gotResults);
       // new code below
-
+      background(255);
+      drawBall();
     }
   }
 }
 
 function drawBall() {
-  fill(0);
-  ellipse(ballX, ballY, 36);
+  fill(50, 255, 255);
+  ellipse(ballX, ballY, 40);
   let labelString = textP.html().toLowerCase();
-  if(labelString.includes("up")) {
+  if(labelString.include("up")) {
     ballY -= ballSpeed;
-  } else if(labelString.includes("down")) {
+  } else if(labelString.include("down")) {
     ballY += ballSpeed;
-  } else if(labelString.includes("left")) {
-    ballX -= ballSpeed;
-  } else if(labelString.includes("right")) {
-    ballX += ballSpeed;
+  } else if(labelString.include("left")) {
+    ballY -= ballSpeed;
+  } else if(labelString.include("right")) {
+    ballY += ballSpeed;
   }
-  ballX = constrain(ballX, 16, width - 16);
-  ballY = constrain(ballY, 16, height - 16);
+  ballX = constrain(ballX, width - 16);
+  ballY = constrain(ballY, height - 16);
+
 }
 
 function buildButtons() {
@@ -127,14 +136,20 @@ function buildButtons() {
 }
 
 function videoReady() {
-  video.style("display", "none");
+  //video.style("display", "none");
   // new code below
-
+  video.style("transform", "scale(-1, 1)" );
   featureExtractor = ml5.featureExtractor("MobileNet", featureExtractorLoaded);
 }
 
 function featureExtractorLoaded() {
-
+  knnClassifier = ml5.KNNClassifier();
+  knnClassifier.load("model/myKNN.json", function() {
+    isModelReady = true;
+    textP.html("Begin adding examples!");
+    buttonDiv.style("display", "block");
+    buttonDiv2.style("display", "block");
+  });
 }
 
 function gotResults(error, results) {
