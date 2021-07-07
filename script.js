@@ -144,7 +144,7 @@ function videoReady() {
 
 function featureExtractorLoaded() {
   knnClassifier = ml5.KNNClassifier();
-  knnClassifier.load("model/myKNN.json", function() {
+  knnClassifier.load("model/myKNN (1).json", function() {
     isModelReady = true;
     textP.html("Begin adding examples!");
     buttonDiv.style("display", "block");
